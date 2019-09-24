@@ -1,0 +1,35 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+{% for post in posts %}
+<div class="post">
+<div class="date">
+{{ post.published_date }}
+</div>
+<h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+<p>{{ post.text|linebreaksbr }}</p>
+<a class="likebutton" id="like{{post.id}}" href="#" data-catid="{{ post.id }}">Like</a>
+<a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.approved_comments.count }}</a>
+</div>
+<a class="likebutton" id="like{{post.id}}" href="#" data-catid="{{ post.id }}">Like</a>
+{% endfor %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript">
+    $('.likebutton').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/likepost",
+        data:{
+                 post_id: catid
+        },
+        success: function( data ) 
+        {
+            $( '#like'+ catid ).remove();
+            $( '#message' ).text(data);
+        }
+     })
+});
+</script>
+{% endblock content %}
